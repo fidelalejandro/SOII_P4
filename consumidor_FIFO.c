@@ -25,6 +25,7 @@ void consumidor(void){
     for(int i=0;i<MAX_BUFFER;i++) {
 		mensaje='w';
 		mq_send(almacen1,&mensaje,sizeof(char),1);
+        printf("se han enviado\n");
 	}
 
     for(i=0;i<DATOS_A_CONSUMIR;i++){
@@ -45,8 +46,8 @@ void main(void) {
     attr.mq_msgsize = sizeof (char);
 
     /* Apertura de los buffers */
-    almacen1 = mq_open("/ALMACEN1", O_CREAT|O_WRONLY, 0777, &attr);
-    almacen2 = mq_open("/ALMACEN2", O_CREAT|O_RDONLY, 0777, &attr);
+    almacen1 = mq_open("/ALMACEN1", O_RDWR, 0777, &attr);
+    almacen2 = mq_open("/ALMACEN2", O_RDWR, 0777, &attr);
 
     if ((almacen1 == -1) || (almacen2 == -1)) {
         perror ("mq_open");
