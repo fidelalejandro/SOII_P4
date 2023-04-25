@@ -18,6 +18,31 @@ mqd_t almacen1;
 mqd_t almacen2;
 
 
+int produce_item(int iter){
+	int item;
+	//Se generan las letras en función de la letra y el máximo de su posición
+	item = 'a'+ (iter%MAX_BUFFER);
+	return item;
+}
+
+void productor(){
+	//Declaración de variables
+	char item;
+	int i;
+	char mensaje;
+	
+	for(i=0;i<DATOS_A_PRODUCIR;i++){
+	 	sleep(rand() % 3);
+		item=produce_item(i);
+		mq_receive(almacen1,&mensaje, sizeof(char),NULL);
+		printf("\n(P): Se ha recibido--%c--\n", mensaje);
+		mensaje = item;
+		mq_send(almacen2,&mensaje, sizeof(char), 0);
+		printf("(P):Se ha enviado--%c--\n", mensaje);
+		
+	}
+}
+
 void main(void) {
     struct mq_attr attr; /* Atributos de la cola */
     attr.mq_maxmsg = MAX_BUFFER;
@@ -45,29 +70,4 @@ void main(void) {
     mq_close(almacen2);
 
     exit(EXIT_SUCCESS);
-}
-
-int produce_item(int iter){
-	int item;
-	//Se generan las letras en función de la letra y el máximo de su posición
-	item = 'a'+ (iter%MAX_BUFFER);
-	return item;
-}
-
-void productor(){
-	//Declaración de variables
-	char item;
-	int i;
-	char mensaje;
-	
-	for(i=0;i<DATOS_A_PRODUCIR;i++){
-	 	sleep(rand() % 3);
-		item=produce_item(i);
-		mq_receive(productor_cola,&mensaje, sizeof(char),NULL);
-		printf("\n(P): Se ha recibido--%c--\n", mensaje);
-		mensaje = item;
-		mq_send(consumidor_cola,&mensaje, sizeof(char), 0);
-		printf("(P):Se ha enviado--%c--\n", mensaje);
-		
-	}
 }
