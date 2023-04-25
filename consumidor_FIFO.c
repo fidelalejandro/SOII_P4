@@ -19,16 +19,17 @@ mqd_t almacen2;
 
 //Función del consumidor
 void consumidor(void){
-
+    char mensaje;
+    int i;
     //Mensajes vaciós
-    for(i=0;i<MAX_BUFFER;i++) {
+    for(int i=0;i<MAX_BUFFER;i++) {
 		mensaje='w';
-		mq_send(alamacen1,&mensaje,sizeof(char),1);
+		mq_send(almacen1,&mensaje,sizeof(char),1);
 	}
 
     for(i=0;i<DATOS_A_CONSUMIR;i++){
         mq_receive(almacen2,&mensaje,sizeof(char),NULL);
-		printf(colorCRecibir "\n(C): Se ha recibido --%c--\n", mensaje);
+		printf("\n(C): Se ha recibido --%c--\n", mensaje);
 		mq_send(almacen1,&mensaje,sizeof(char),0);
 		printf("(C): Se ha consumido --%c--\n", mensaje);
 	}
@@ -56,9 +57,9 @@ void main(void) {
 
     consumidor();
 
-    mq_getattr(consumidor_cola, &attr);
+    mq_getattr(almacen2, &attr);
 	printf("A la cola le quedan C:%ld\n",attr.mq_curmsgs);
-	mq_getattr(productor_cola, &attr);
+	mq_getattr(almacen1, &attr);
 	printf("A la cola le quedan P:%ld\n",attr.mq_curmsgs);
 
     mq_close(almacen1);
