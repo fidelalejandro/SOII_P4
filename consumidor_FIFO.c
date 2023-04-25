@@ -22,7 +22,7 @@ void consumidor(void){
     char mensaje;
     int i;
     //Mensajes vaciós
-    for(int i=0;i<MAX_BUFFER;i++) {
+    for(i=0;i<MAX_BUFFER;i++) {
 		mensaje='w';
 		mq_send(almacen1,&mensaje,sizeof(char),1);
         printf("se han enviado\n");
@@ -31,9 +31,10 @@ void consumidor(void){
     for(i=0;i<DATOS_A_CONSUMIR;i++){
         mq_receive(almacen2,&mensaje,sizeof(char),NULL);
 		printf("\n(C): Se ha recibido --%c--\n", mensaje);
-		mq_send(almacen1,&mensaje,sizeof(char),0);
+		mq_send(almacen1,&mensaje,sizeof(char), 0);
 		printf("(C): Se ha consumido --%c--\n", mensaje);
 	}
+
 	for(i=0;i<MAX_BUFFER;i++){
 		mq_receive(almacen1,&mensaje,sizeof(char),NULL);
 	}
@@ -46,8 +47,8 @@ void main(void) {
     attr.mq_msgsize = sizeof (char);
 
     /* Apertura de los buffers */
-    almacen1 = mq_open("/ALMACEN1", O_RDWR, 0777, &attr);
-    almacen2 = mq_open("/ALMACEN2", O_RDWR, 0777, &attr);
+    almacen1 = mq_open(ALMACEN1, O_RDWR, 0777, &attr);
+    almacen2 = mq_open(ALMACEN2, O_RDONLY, 0777, &attr);
 
     if ((almacen1 == -1) || (almacen2 == -1)) {
         perror ("mq_open");
