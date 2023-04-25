@@ -32,7 +32,7 @@ void productor(){
 	char mensaje;
 	
 	for(i=0;i<DATOS_A_PRODUCIR;i++){
-	 	sleep(3);
+	 	//sleep(1);
 		item=produce_item(i);
 		mq_receive(almacen1,&mensaje, sizeof(char),NULL);
 		printf("\n(P): Se ha recibido--%c--\n", mensaje);
@@ -54,8 +54,8 @@ void main(void) {
     mq_unlink(ALMACEN2);
 
     /* Apertura de los buffers */
-    almacen1 = mq_open(ALMACEN1, O_CREAT|O_RDWR, 0777, &attr);
-    almacen2 = mq_open(ALMACEN2, O_CREAT|O_RDWR, 0777, &attr);
+    almacen1 = mq_open(ALMACEN1, O_CREAT|O_RDONLY, 0777, &attr);
+    almacen2 = mq_open(ALMACEN2, O_CREAT|O_WRONLY, 0777, &attr);
 
     if ((almacen1 == -1) || (almacen2 == -1)) {
         perror ("mq_open");
