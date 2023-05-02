@@ -1,14 +1,16 @@
-#include <time.h> //Para la semilla que nos permitirá a partir del tiempo obtener valores aleatorios
+#include <time.h>
 #include <stdio.h> 
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <mqueue.h> //Para el correcto envío de mensajes con las distintas funciones POSIX
-#include <unistd.h> //Para las llamadas a la función sleep
+#include <mqueue.h> 
+#include <unistd.h>
 
-//Constantes: Tamaño del array, número de mensajes a enviar, primer parámetros de los mq_open(const char*) y colores
+//Tamaño del buffer
 #define MAX_BUFFER 5
+//Número de mensajes a enviar
 #define DATOS_A_PRODUCIR 100
+//Primer parámetros de los mq_open
 #define ALMACEN1 "/ALMACEN1"
 #define ALMACEN2 "/ALMACEN2"
 
@@ -26,19 +28,24 @@ int produce_item(int iter){
 }
 
 void productor(){
-	//Declaración de variables
+	//Valor producido
 	char item;
+    //Valor a enviar
+    char mensaje;
 	int i;
-	char mensaje;
+
+    printf("Espera a que se llene el buffer\n");
 	
 	for(i=0;i<DATOS_A_PRODUCIR;i++){
+
 	 	//sleep(1);
+        //Se genera el elemento
 		item=produce_item(i);
 		mq_receive(almacen1,&mensaje, sizeof(char),NULL);
-		printf("\n(P): Se ha recibido--%c--\n", mensaje);
+        printf("\n\033[33m[P] Se ha recibido: %c \033[0m\n", mensaje);
 		mensaje = item;
 		mq_send(almacen2,&mensaje, sizeof(char), 0);
-		printf("(P):Se ha enviado--%c--\n", mensaje);
+        printf("\033[35m[P] Se ha enviado: %c \033[0m \n", mensaje);
 		
 	}
 }
@@ -49,7 +56,7 @@ void main(void) {
     attr.mq_msgsize = sizeof (char);
 
     /* Borrado de los buffers de entrada
-    por si exist´ıan de una ejecuci´on previa*/
+    por si existían de una ejecuci´on previa*/
     mq_unlink(ALMACEN1);
     mq_unlink(ALMACEN2);
 
@@ -64,6 +71,7 @@ void main(void) {
 
     srand(time(NULL));
 
+    printf("---------------Productor FIFO---------------------\n");
     productor();
 
     mq_close(almacen1);
