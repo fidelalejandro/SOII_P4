@@ -30,9 +30,9 @@ void consumidor(void){
 
     for(i=0;i<DATOS_A_CONSUMIR;i++){
         mq_receive(almacen2,&mensaje,sizeof(char),NULL);
-        printf("\n\033[33m[P] Se ha enviado: %c \033[0m\n", mensaje);
+        printf("\n\033[33m[C] Se ha enviado: %c \033[0m\n", mensaje);
 		mq_send(almacen1,&mensaje,sizeof(char), 0);
-        printf("\033[35m[P] Se ha consumido: %c \033[0m \n", mensaje);
+        printf("\033[35m[C] Se ha consumido: %c \033[0m \n", mensaje);
         
 	}
 
