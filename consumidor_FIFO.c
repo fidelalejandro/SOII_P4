@@ -1,12 +1,12 @@
-#include <time.h> //Para la semilla que nos permitirá a partir del tiempo obtener valores aleatorios
+#include <time.h>
 #include <stdio.h> 
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <mqueue.h> //Para el correcto envío de mensajes con las distintas funciones POSIX
-#include <unistd.h> //Para las llamadas a la función sleep
+#include <mqueue.h> 
+#include <unistd.h> 
 
-//Constantes: Tamaño del array, número de mensajes a enviar, primer parámetros de los mq_open(const char*) y colores
+//Constantes: Tamaño del array, número de mensajes a enviar, primer parámetros de los mq_open(const char*)
 #define MAX_BUFFER 5
 #define DATOS_A_CONSUMIR 100
 #define ALMACEN1 "/ALMACEN1"
@@ -23,16 +23,17 @@ void consumidor(void){
     int i;
     //Mensajes vaciós
     for(i=0;i<MAX_BUFFER;i++) {
-		mensaje='w';
+		mensaje='-';
 		mq_send(almacen1,&mensaje,sizeof(char),1);
-        printf("se han enviado\n");
+        printf("Se han enviado\n");
 	}
 
     for(i=0;i<DATOS_A_CONSUMIR;i++){
         mq_receive(almacen2,&mensaje,sizeof(char),NULL);
-		printf("\n(C): Se ha recibido --%c--\n", mensaje);
+        printf("\n\033[33m[P] Se ha enviado: %c \033[0m\n", mensaje);
 		mq_send(almacen1,&mensaje,sizeof(char), 0);
-		printf("(C): Se ha consumido --%c--\n", mensaje);
+        printf("\033[35m[P] Se ha consumido: %c \033[0m \n", mensaje);
+        
 	}
 
 	for(i=0;i<MAX_BUFFER;i++){
@@ -57,6 +58,7 @@ void main(void) {
 
     srand(time(NULL));
 
+    printf("---------------Consumidor FIFO---------------------\n");
     consumidor();
 
     mq_getattr(almacen2, &attr);
